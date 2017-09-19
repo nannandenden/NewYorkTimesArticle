@@ -2,6 +2,7 @@ package com.android.nanden.newyorktimesarticle.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.widget.GridView;
 import com.android.nanden.newyorktimesarticle.R;
 import com.android.nanden.newyorktimesarticle.adapter.ArticleArrayAdapter;
 import com.android.nanden.newyorktimesarticle.client.ArticleClient;
+import com.android.nanden.newyorktimesarticle.fragments.FilterDialogFragment;
 import com.android.nanden.newyorktimesarticle.model.Article;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -36,6 +38,7 @@ public class ArticleSearchActivity extends AppCompatActivity {
     GridView gvArticle;
     @BindView(R.id.toolbar) Toolbar toolbar;
 
+    private ArticleClient client = new ArticleClient();
     private List<Article> articles;
     private ArticleArrayAdapter adapter;
 
@@ -70,20 +73,33 @@ public class ArticleSearchActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//            JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
+//                @Override
+//                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                    System.out.println("response: " + response.toString());
+//                    JSONArray filterJsonResult = null;
+//                    try {
+//                        filterJsonResult = response.getJSONObject("response").getJSONArray("docs");
+//                        articles.addAll(Article.fromJsonArray(filterJsonResult));
+//                        adapter.notifyDataSetChanged();
+//                    } catch (JSONException e) {
+//                        System.out.println(e.getMessage());
+//                    }
+//                }
+//            };
+//
+//            client.getFilterResult("education", "20170506", null, 0, handler);
+//            return true;
+//
+//    }
     @OnClick(R.id.btnSearch)
     public void onArticleSearch(View view) {
         String query = etSearchItem.getText().toString();
@@ -103,7 +119,13 @@ public class ArticleSearchActivity extends AppCompatActivity {
                 }
             }
         };
-        ArticleClient client = new ArticleClient();
         client.getSearchResult(query, handler);
+    }
+
+    public void onFilterAction(MenuItem item) {
+        FragmentManager fm = getSupportFragmentManager();
+        FilterDialogFragment filterDialogFragment = FilterDialogFragment.newInstance("Enter " +
+                "Category");
+        filterDialogFragment.show(fm, "fragment_filter_dialog");
     }
 }

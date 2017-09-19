@@ -11,4 +11,9 @@ public class Constants {
             ".json?api-key=ab29c860c7ac475fa441ce8f208f7ef1";
     public static final String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     public static final String api_key = "ab29c860c7ac475fa441ce8f208f7ef1";
+
+    public static final int QUERY_SHORT_OLDEST = 1;
+    public static final int QUERY_SHORT_NEWEST = 2;
+
+
 }
