@@ -10,8 +10,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.android.nanden.newyorktimesarticle.R;
+import com.android.nanden.newyorktimesarticle.Utils;
 import com.android.nanden.newyorktimesarticle.adapter.ArticleArrayAdapter;
 import com.android.nanden.newyorktimesarticle.client.ArticleClient;
 import com.android.nanden.newyorktimesarticle.model.Article;
@@ -104,6 +106,10 @@ public class ArticleSearchActivity extends AppCompatActivity {
             }
         };
         ArticleClient client = new ArticleClient();
-        client.getSearchResult(query, handler);
+        if (Utils.isNetworkAvaiable(this)) {
+            client.getSearchResult(query, handler);
+        } else {
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
+        }
     }
 }
