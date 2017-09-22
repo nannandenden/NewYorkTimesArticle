@@ -1,11 +1,12 @@
 package com.android.nanden.newyorktimesarticle.fragments;
 
 import android.app.DatePickerDialog;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.android.nanden.newyorktimesarticle.R;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +31,8 @@ import butterknife.Unbinder;
 
 public class FilterDialogFragment extends DialogFragment implements View.OnClickListener,
         DatePickerDialog.OnDateSetListener {
+
+    private static final String LOG_TAG = FilterDialogFragment.class.getSimpleName();
 
     @BindView(R.id.cbArts)
     CheckBox cbArt;
@@ -63,6 +67,7 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
         View view = inflater.inflate(R.layout.fragment_filter_dialog, container);
         unbinder = ButterKnife.bind(this, view);
         filterValue = new HashMap<>();
+        tvDateInput.setText(DateFormat.format("MM/dd/yyyy", Calendar.getInstance()));
         return view;
     }
 
@@ -117,6 +122,7 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, day);
         //TODO: need to set to the correct date into text view
+        tvDateInput.setText(DateFormat.format("MM/dd/yyyy", calendar).toString());
     }
 
 

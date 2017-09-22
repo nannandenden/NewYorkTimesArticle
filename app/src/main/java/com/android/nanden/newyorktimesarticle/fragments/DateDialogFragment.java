@@ -2,10 +2,11 @@ package com.android.nanden.newyorktimesarticle.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+
+import java.util.Calendar;
 
 /**
  * Created by nanden on 9/21/17.
@@ -13,9 +14,6 @@ import android.support.v4.app.DialogFragment;
 
 public class DateDialogFragment extends DialogFragment {
 
-    public interface DateDialogListener {
-        void onFinishEditDate(int year, int moth, int day);
-    }
     public DateDialogFragment() {
     }
 
@@ -38,7 +36,7 @@ public class DateDialogFragment extends DialogFragment {
 
         DatePickerDialog.OnDateSetListener listener = (DatePickerDialog.OnDateSetListener)
                 getTargetFragment();
-        return new DatePickerDialog(getContext(), listener, year, month, day);
+        return new DatePickerDialog(getActivity(), listener, year, month, day);
     }
 
 }
