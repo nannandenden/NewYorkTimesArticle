@@ -1,5 +1,7 @@
 package com.android.nanden.newyorktimesarticle.fragments;
 
+import android.app.DatePickerDialog;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,7 +27,8 @@ import butterknife.Unbinder;
  * Created by nanden on 9/19/17.
  */
 
-public class FilterDialogFragment extends DialogFragment implements View.OnClickListener{
+public class FilterDialogFragment extends DialogFragment implements View.OnClickListener,
+        DatePickerDialog.OnDateSetListener {
 
     @BindView(R.id.cbArts)
     CheckBox cbArt;
@@ -39,14 +43,13 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
     private Map<String, String> filterValue;
 
     public interface FilterDialogListener {
-
         void onFilterDialog(Map<String, String> filterValue);
     }
-
     public FilterDialogFragment() {
         // an empty constructor is required for dialogFragment
         // use newInstance to add argument instead of this constructor
     }
+
     public static FilterDialogFragment newInstance(String category) {
         FilterDialogFragment fragment = new FilterDialogFragment();
         Bundle args = new Bundle();
@@ -54,7 +57,6 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
         fragment.setArguments(args);
         return fragment;
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
         tvDateInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                showDatePickerDialog();
+                showDatePickerDialog();
             }
         });
 
@@ -106,6 +108,15 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
         // 300 is request code
         dateDialogFragment.setTargetFragment(FilterDialogFragment.this, 300);
         dateDialogFragment.show(fm, "date_dialog_fragment");
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        //TODO: need to set to the correct date into text view
     }
 
 
