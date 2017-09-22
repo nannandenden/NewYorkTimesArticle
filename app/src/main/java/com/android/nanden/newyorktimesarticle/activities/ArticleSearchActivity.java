@@ -12,9 +12,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.android.nanden.newyorktimesarticle.Constants;
 import com.android.nanden.newyorktimesarticle.R;
+import com.android.nanden.newyorktimesarticle.Utils;
 import com.android.nanden.newyorktimesarticle.adapter.ArticleArrayAdapter;
 import com.android.nanden.newyorktimesarticle.client.ArticleClient;
 import com.android.nanden.newyorktimesarticle.fragments.FilterDialogFragment;
@@ -115,7 +117,11 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                 }
             }
         };
-        client.getSearchResult(query, handler);
+        if (Utils.isNetworkAvailable(this)) {
+            client.getSearchResult(query, handler);
+        } else {
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void showFilterDialog() {
@@ -153,7 +159,11 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                 }
             }
         };
-        client.getFilterResult(newsDesk, beginDate, sort, handler);
+        if (Utils.isNetworkAvailable(this)) {
+            client.getFilterResult(newsDesk, beginDate, sort, handler);
+        } else {
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
+        }
     }
 
 }
