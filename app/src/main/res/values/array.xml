@@ -2,7 +2,8 @@
 <resources>
     <string-array
         name="sort_order">
-        <item>Newest</item>
-        <item>Oldest</item>
+        <item>default</item>
+        <item>newest</item>
+        <item>oldest</item>
     </string-array>
 </resources>

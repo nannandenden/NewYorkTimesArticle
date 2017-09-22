@@ -11,5 +11,6 @@
     <string name="sports">Sports</string>
     <string name="save">SAVE</string>
     <string name="sort_order">Sort Order</string>
-    <string name="begin_date">Begin Date</string>
+    <string name="begin_date_display">Begin Date</string>
+    <string name="date_format">yyyyMMdd</string>
 </resources>

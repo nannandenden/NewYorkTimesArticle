@@ -1,7 +1,6 @@
 package com.android.nanden.newyorktimesarticle.client;
 
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.android.nanden.newyorktimesarticle.Constants;
 import com.loopj.android.http.AsyncHttpClient;
@@ -33,7 +32,7 @@ public class ArticleClient {
      var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
      url += '?' + $.param({
      'api-key': "ab29c860c7ac475fa441ce8f208f7ef1",
-     'fq': "news_desk:(\"Sports\" \"Foreign\")",
+     'fq': "news_desk:("Sports" "Foreign")",
      'begin_date': "20170506",
      'end_date': "20170507",
      'sort': "newest"
@@ -48,25 +47,18 @@ public class ArticleClient {
      });
      */
 
-    public void getFilterResult(@Nullable String category, @Nullable String startDate, @Nullable String
-                                endDate, @Nullable int
-            isSort, JsonHttpResponseHandler handler) {
+    public void getFilterResult(@Nullable String newDesk, @Nullable String startDate, @Nullable
+            String sort, JsonHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("api-key", Constants.api_key);
-        if (!TextUtils.isEmpty(startDate)) {
-            params.put("begin_date", startDate);
+        if (newDesk != null) {
+            params.put(Constants.FQ, Constants.NEWS_DESK + ":(" + newDesk + ")");
         }
-        if (!TextUtils.isEmpty(endDate)) {
-            params.put("end_date", endDate);
+        if (startDate != null) {
+            params.put(Constants.BEGIN_DATE, startDate);
         }
-        if (!TextUtils.isEmpty(category)) {
-            params.put("fq", "news_desk:(" + category + ")");
-        }
-        if (isSort == Constants.QUERY_SHORT_NEWEST) {
-            params.put("sort", "newest");
-        }
-        if (isSort == Constants.QUERY_SHORT_OLDEST) {
-            params.put("sort", "oldest");
+        if (sort != null) {
+            params.put(Constants.SORT, Constants.NEWEST);
         }
         client.get(Constants.url, params, handler);
     }

@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.android.nanden.newyorktimesarticle.Constants;
 import com.android.nanden.newyorktimesarticle.R;
 
 import java.util.Calendar;
@@ -92,16 +93,22 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
 
     @Override
     public void onClick(View view) {
+        StringBuilder newDesk = new StringBuilder();
         if (cbArt.isChecked()) {
-            filterValue.put("new_desk", "art");
+            newDesk.append("\"Art\" ");
         }
         if (cbFashion.isChecked()) {
-            filterValue.put("new_desk1", "fashion");
+            newDesk.append("\"Fashion\" ");
         }
         if (cbSports.isChecked()) {
-            filterValue.put("new_desk2", "sports");
+            newDesk.append("\"Sports\" ");
         }
-        filterValue.put("sort", spinnerSort.getSelectedItem().toString());
+        if (!TextUtils.isEmpty(newDesk.toString())) {
+            filterValue.put(Constants.NEWS_DESK, newDesk.toString());
+        }
+        if (!spinnerSort.getSelectedItem().toString().equals("default")) {
+            filterValue.put(Constants.SORT, spinnerSort.getSelectedItem().toString());
+        }
         FilterDialogListener listener = (FilterDialogListener) getActivity();
         listener.onFilterDialog(filterValue);
         dismiss();
@@ -123,6 +130,8 @@ public class FilterDialogFragment extends DialogFragment implements View.OnClick
         calendar.set(Calendar.DAY_OF_MONTH, day);
         //TODO: need to set to the correct date into text view
         tvDateInput.setText(DateFormat.format("MM/dd/yyyy", calendar).toString());
+        filterValue.put(Constants.BEGIN_DATE, DateFormat.format(getString(R.string.date_format), calendar)
+                .toString());
     }
 
 

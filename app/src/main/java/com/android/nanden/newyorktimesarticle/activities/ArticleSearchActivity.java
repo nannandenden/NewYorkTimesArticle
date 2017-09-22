@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 
+import com.android.nanden.newyorktimesarticle.Constants;
 import com.android.nanden.newyorktimesarticle.R;
 import com.android.nanden.newyorktimesarticle.adapter.ArticleArrayAdapter;
 import com.android.nanden.newyorktimesarticle.client.ArticleClient;
@@ -102,16 +103,15 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                System.out.println("response: " + response.toString());
+                Log.d(LOG_TAG, "response: " + response.toString());
                 JSONArray articleJsonResults = null;
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(articleJsonResults));
                     adapter.notifyDataSetChanged();
-                    System.out.println(articles.toString());
                 } catch (JSONException e) {
-                    System.out.println(e.getMessage());
+                    Log.d(LOG_TAG, "error: " + e.getMessage());
                 }
             }
         };
@@ -126,9 +126,34 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
 
     @Override
     public void onFilterDialog(Map<String, String> filterValue) {
-        for (Map.Entry<String, String > value : filterValue.entrySet()) {
-            Log.d(LOG_TAG, value.getKey() + " " + value.getValue());
-        }
+        String newsDesk = filterValue.containsKey(Constants.NEWS_DESK) ? filterValue.get
+                (Constants.NEWS_DESK) : null;
+        String beginDate = filterValue.containsKey(Constants.BEGIN_DATE) ? filterValue.get
+                (Constants.BEGIN_DATE) : null;
+        String sort = filterValue.containsKey(Constants.SORT) ? filterValue.get(Constants.SORT) :
+                null;
+        JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                Log.d(LOG_TAG, "fail");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.d(LOG_TAG, "response: " + response.toString());
+                JSONArray filterResults;
+                try {
+                    filterResults = response.getJSONObject("response").getJSONArray("docs");
+                    articles.addAll(Article.fromJsonArray(filterResults));
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.d(LOG_TAG, "error: " + e.getMessage());
+                }
+            }
+        };
+        client.getFilterResult(newsDesk, beginDate, sort, handler);
     }
 
 }
