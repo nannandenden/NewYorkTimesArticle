@@ -4,4 +4,12 @@
     <string name="enter_search_query">Enter Search Query</string>
     <string name="search">Search</string>
     <string name="title_activity_article_detail">ArticleDetailActivity</string>
+    <string name="filter">Filter</string>
+    <string name="new_desk_value">New Desk Value</string>
+    <string name="arts">Arts</string>
+    <string name="fashion_amp_style"><![CDATA[Fashion & Style]]></string>
+    <string name="sports">Sports</string>
+    <string name="save">SAVE</string>
+    <string name="sort_order">Sort Order</string>
+    <string name="begin_date">Begin Date</string>
 </resources>

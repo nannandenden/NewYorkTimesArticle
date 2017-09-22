@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,13 +26,19 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
 
-public class ArticleSearchActivity extends AppCompatActivity {
+import static com.android.nanden.newyorktimesarticle.R.id.miActionFilter;
+
+public class ArticleSearchActivity extends AppCompatActivity implements FilterDialogFragment
+        .FilterDialogListener {
+
+    private static final String LOG_TAG = ArticleSearchActivity.class.getSimpleName();
     @BindView(R.id.etSearchItem)
     EditText etSearchItem;
     @BindView(R.id.gvArticle)
@@ -47,8 +54,9 @@ public class ArticleSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_search);
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
+
         setViews();
+
         gvArticle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -61,6 +69,8 @@ public class ArticleSearchActivity extends AppCompatActivity {
     }
 
     private void setViews() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("New York Times Articles");
         articles = new ArrayList<>();
         adapter = new ArticleArrayAdapter(this, articles);
         gvArticle.setAdapter(adapter);
@@ -73,33 +83,19 @@ public class ArticleSearchActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//            JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
-//                @Override
-//                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                    System.out.println("response: " + response.toString());
-//                    JSONArray filterJsonResult = null;
-//                    try {
-//                        filterJsonResult = response.getJSONObject("response").getJSONArray("docs");
-//                        articles.addAll(Article.fromJsonArray(filterJsonResult));
-//                        adapter.notifyDataSetChanged();
-//                    } catch (JSONException e) {
-//                        System.out.println(e.getMessage());
-//                    }
-//                }
-//            };
-//
-//            client.getFilterResult("education", "20170506", null, 0, handler);
-//            return true;
-//
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == miActionFilter) {
+            showFilterDialog();
+        }
+            return true;
+
+    }
     @OnClick(R.id.btnSearch)
     public void onArticleSearch(View view) {
         String query = etSearchItem.getText().toString();
@@ -122,10 +118,17 @@ public class ArticleSearchActivity extends AppCompatActivity {
         client.getSearchResult(query, handler);
     }
 
-    public void onFilterAction(MenuItem item) {
+    private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        FilterDialogFragment filterDialogFragment = FilterDialogFragment.newInstance("Enter " +
-                "Category");
-        filterDialogFragment.show(fm, "fragment_filter_dialog");
+        FilterDialogFragment filterDialogFragment = FilterDialogFragment.newInstance("Filter");
+        filterDialogFragment.show(fm, "filter_dialog_fragment");
     }
+
+    @Override
+    public void onFilterDialog(Map<String, String> filterValue) {
+        for (Map.Entry<String, String > value : filterValue.entrySet()) {
+            Log.d(LOG_TAG, value.getKey() + " " + value.getValue());
+        }
+    }
+
 }
