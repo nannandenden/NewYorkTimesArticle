@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:padding="@dimen/dialog_layout_padding"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/tvFilterTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/filter"
+        android:textAppearance="@android:style/TextAppearance.Large"/>
+
+    <TextView
+        android:id="@+id/tvNewDesk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvFilterTitle"
+        android:paddingTop="@dimen/tv_dialog_padding"
+        android:text="@string/new_desk_value"/>
+
+    <CheckBox
+        android:id="@+id/cbArts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvNewDesk"
+        android:text="@string/arts"/>
+
+    <CheckBox
+        android:id="@+id/cbFashion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/cbArts"
+        android:text="@string/fashion_amp_style"/>
+
+    <CheckBox
+        android:id="@+id/cbSports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cbFashion"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/sports"/>
+
+    <TextView
+        android:id="@+id/tvSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/save"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textColor="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/tvSortOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/cbSports"
+        android:paddingTop="@dimen/tv_dialog_padding"
+        android:text="@string/sort_order"/>
+
+    <Spinner
+        android:id="@+id/spinnerSort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/sort_order"
+        android:prompt="@string/sort_order"
+        android:layout_below="@+id/tvSortOrder"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spinnerSort"
+        android:paddingTop="@dimen/tv_dialog_padding"
+        android:text="@string/begin_date_display"/>
+
+    <TextView
+        android:id="@+id/tvDateInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvDate"
+        tools:text="9/20/2017"
+        android:textAppearance="@android:style/TextAppearance.Large"/>
+
+</RelativeLayout>

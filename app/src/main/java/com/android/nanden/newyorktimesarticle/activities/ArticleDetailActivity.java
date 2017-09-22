@@ -18,13 +18,14 @@ public class ArticleDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.wvArticleDetail)
     WebView webView;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
 
         final Article article = (Article) getIntent().getSerializableExtra("article");
         webView.getSettings().setJavaScriptEnabled(true);
