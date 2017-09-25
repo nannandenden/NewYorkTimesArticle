@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
@@ -9,6 +8,7 @@
     tools:context="com.android.nanden.newyorktimesarticle.activities.ArticleSearchActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -19,6 +19,14 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_article_search"/>
+    <GridView
+        android:id="@+id/gvArticle"
+        android:padding="@dimen/view_padding"
+        android:layout_below="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:numColumns="4"/>
 
 </RelativeLayout>
