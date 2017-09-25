@@ -1,5 +1,7 @@
 package com.android.nanden.newyorktimesarticle.model;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,10 +19,12 @@ public class Article implements Serializable {
     private String webUrl;
     private String headline;
     private String thumbNail;
+    private String snippet;
 
     public Article(JSONObject jsonObject) {
         try {
             this.webUrl = jsonObject.getString("web_url");
+            this.snippet = jsonObject.getString("snippet");
             this.headline = jsonObject.getJSONObject("headline").getString("main");
             // some article has image and some does not have
             JSONArray multimedia = jsonObject.getJSONArray("multimedia");
@@ -58,5 +62,10 @@ public class Article implements Serializable {
 
     public String getThumbNail() {
         return thumbNail;
+    }
+
+    public String getSnippet() {
+        Log.d("getSnippet", snippet);
+        return snippet;
     }
 }
