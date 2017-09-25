@@ -27,6 +27,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -235,7 +236,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
     public void onItemClick(View viewItem, int position) {
         Article article = articles.get(position);
         Intent intent = new Intent(ArticleSearchActivity.this, ArticleDetailActivity.class);
-        intent.putExtra(getString(R.string.article), article);
+        intent.putExtra(getString(R.string.article), Parcels.wrap(article));
 
         startActivity(intent);
     }

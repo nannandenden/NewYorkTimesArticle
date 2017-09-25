@@ -5,21 +5,24 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by nanden on 9/19/17.
  */
-
-public class Article implements Serializable {
+@Parcel
+public class Article {
 
     private String webUrl;
     private String headline;
     private String thumbNail;
     private String snippet;
+
+    public Article() {
+    }
 
     public Article(JSONObject jsonObject) {
         try {

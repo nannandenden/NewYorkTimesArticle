@@ -14,6 +14,8 @@ import android.webkit.WebViewClient;
 import com.android.nanden.newyorktimesarticle.R;
 import com.android.nanden.newyorktimesarticle.model.Article;
 
+import org.parceler.Parcels;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -34,7 +36,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Article Detail");
 
-        article = (Article) getIntent().getSerializableExtra(getString(R.string.article));
+        article = Parcels.unwrap(getIntent().getParcelableExtra(getString(R.string
+                .article)));
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
             @Override
