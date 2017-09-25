@@ -59,7 +59,19 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         ButterKnife.bind(this);
 
         setViews();
+        defineViewEventsFunction();
+    }
 
+    private void setViews() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("New York Times Articles");
+        articles = new ArrayList<>();
+        adapter = new ArticleArrayAdapter(this, articles);
+        gvArticle.setAdapter(adapter);
+    }
+
+    private void defineViewEventsFunction() {
+        // for opening the clicked article in new webview
         gvArticle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -69,14 +81,22 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                 startActivity(intent);
             }
         });
-    }
+        // for filling the items automatically (infinite scrolling)
+        // onLoadMore method wil be triggered when use exceed the set visibleThreshHold limit
+        gvArticle.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // triggered only when new data needs to be appended to the gridview list
+                // add code for append new item to adapter view
+                // page: next page to load
+                Log.d(LOG_TAG, "onLoadMore:totalItemsCount: " + totalItemsCount);
+                Log.d(LOG_TAG, "onLoadMore:page: " + page);
+                loadNextDataFromApi(page);
+                // return true only if there is a new item to load
+                return true;
+            }
+        });
 
-    private void setViews() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("New York Times Articles");
-        articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        gvArticle.setAdapter(adapter);
     }
 
     @Override
@@ -99,8 +119,12 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
             return true;
 
     }
+
     @OnClick(R.id.btnSearch)
     public void onArticleSearch(View view) {
+        // new search notify. clear the view
+        articles.clear();
+        adapter.notifyDataSetChanged();
         String query = etSearchItem.getText().toString();
         JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
             @Override
@@ -118,12 +142,11 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
             }
         };
         if (Utils.isNetworkAvailable(this)) {
-            client.getSearchResult(query, handler);
+            client.getSearchResult(query, handler, 0);
         } else {
             Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
         }
     }
-
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
         FilterDialogFragment filterDialogFragment = FilterDialogFragment.newInstance("Filter");
@@ -132,6 +155,10 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
 
     @Override
     public void onFilterDialog(Map<String, String> filterValue) {
+        // new search notify. clear the view
+        articles.clear();
+        adapter.notifyDataSetChanged();
+        Log.d(LOG_TAG, "onFilterDialog called");
         String newsDesk = filterValue.containsKey(Constants.NEWS_DESK) ? filterValue.get
                 (Constants.NEWS_DESK) : null;
         String beginDate = filterValue.containsKey(Constants.BEGIN_DATE) ? filterValue.get
@@ -141,7 +168,6 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
                 Log.d(LOG_TAG, "fail");
             }
 
@@ -160,7 +186,43 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
             }
         };
         if (Utils.isNetworkAvailable(this)) {
-            client.getFilterResult(newsDesk, beginDate, sort, handler);
+            client.getFilterResult(newsDesk, beginDate, sort, handler, 0);
+        } else {
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
+        }
+    }
+    // append next set of data into the adapter
+    // 1. send network request
+    // 2. append the data to the adapter
+    private void loadNextDataFromApi(int page) {
+        // send appropriate data to get the paginated data
+        // send the request data including the page number and get the request back
+        // deserialize and construct the new data model
+        // append the new data objects to the existing set of items inside the array of items and
+        // notify adapter
+        Log.d(LOG_TAG, "loadNextDataFromApi called");
+        JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.d(LOG_TAG, "response: " + response.toString());
+                JSONArray nextRequestResults;
+                try {
+                    nextRequestResults = response.getJSONObject("response").getJSONArray("docs");
+                    articles.addAll(Article.fromJsonArray(nextRequestResults));
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.d(LOG_TAG, "error: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.d(LOG_TAG, "fail");
+            }
+        };
+        if (Utils.isNetworkAvailable(this)) {
+            client.getNextPageResult(handler, page);
         } else {
             Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
         }
