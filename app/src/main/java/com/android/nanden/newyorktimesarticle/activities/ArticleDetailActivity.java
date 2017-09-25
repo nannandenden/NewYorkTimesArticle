@@ -34,7 +34,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Article Detail");
 
-        article = (Article) getIntent().getSerializableExtra("article");
+        article = (Article) getIntent().getSerializableExtra(getString(R.string.article));
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
             @Override

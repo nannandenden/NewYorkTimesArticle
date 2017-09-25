@@ -1,5 +1,6 @@
 package com.android.nanden.newyorktimesarticle.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.nanden.newyorktimesarticle.Constants;
@@ -37,7 +39,7 @@ import cz.msebera.android.httpclient.Header;
 import static com.android.nanden.newyorktimesarticle.R.id.miActionFilter;
 
 public class ArticleSearchActivity extends AppCompatActivity implements FilterDialogFragment
-        .FilterDialogListener {
+        .FilterDialogListener, ArticleAdapter.OnItemClickListener {
 
     private static final String LOG_TAG = ArticleSearchActivity.class.getSimpleName();
     @BindView(R.id.rvArticle)
@@ -72,16 +74,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
     }
 
     private void defineViewEventsFunction() {
-//        // for opening the clicked article in new webview
-//        gvArticle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(ArticleSearchActivity.this, ArticleDetailActivity.class);
-//                Article article = articles.get(i);
-//                intent.putExtra("article", article);
-//                startActivity(intent);
-//            }
-//        });
+        articleAdapter.setOnItemClickListener(this);
         scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             protected void onLoadMore(int page, int totalItemCount, RecyclerView recyclerView) {
@@ -238,4 +231,12 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         }
     }
 
+    @Override
+    public void onItemClick(View viewItem, int position) {
+        Article article = articles.get(position);
+        Intent intent = new Intent(ArticleSearchActivity.this, ArticleDetailActivity.class);
+        intent.putExtra(getString(R.string.article), article);
+
+        startActivity(intent);
+    }
 }
