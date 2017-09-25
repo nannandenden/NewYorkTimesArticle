@@ -1,6 +1,7 @@
 package com.android.nanden.newyorktimesarticle.client;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.android.nanden.newyorktimesarticle.Constants;
 import com.loopj.android.http.AsyncHttpClient;
@@ -12,19 +13,21 @@ import com.loopj.android.http.RequestParams;
  */
 
 public class ArticleClient {
-
+    private static final String LOG_TAG = ArticleClient.class.getSimpleName();
     private AsyncHttpClient client;
+    private RequestParams currentRequestNoPage;
     public ArticleClient() {
         this.client = new AsyncHttpClient();
     }
 
-    public void getSearchResult(String query, JsonHttpResponseHandler handler
+    public void getSearchResult(String query, JsonHttpResponseHandler handler, int pageCount
     ) {
+        Log.d(LOG_TAG, "pageCount: " + pageCount);
         RequestParams params = new RequestParams();
         params.put("api-key", Constants.api_key);
-        params.put("page", 0);
         params.put("q", query);
-        client.get(Constants.url, params, handler);
+        this.currentRequestNoPage = params;
+        client.get(Constants.url, addPageCountToRequest(this.currentRequestNoPage, pageCount), handler);
     }
 
     /**
@@ -48,7 +51,8 @@ public class ArticleClient {
      */
 
     public void getFilterResult(@Nullable String newDesk, @Nullable String startDate, @Nullable
-            String sort, JsonHttpResponseHandler handler) {
+            String sort, JsonHttpResponseHandler handler, int pageCount) {
+        Log.d(LOG_TAG, "pageCount: " + pageCount);
         RequestParams params = new RequestParams();
         params.put("api-key", Constants.api_key);
         if (newDesk != null) {
@@ -60,8 +64,21 @@ public class ArticleClient {
         if (sort != null) {
             params.put(Constants.SORT, Constants.NEWEST);
         }
-        client.get(Constants.url, params, handler);
+        this.currentRequestNoPage = params;
+        client.get(Constants.url, addPageCountToRequest(this.currentRequestNoPage, pageCount), handler);
     }
+
+    public void getNextPageResult(JsonHttpResponseHandler handler, int page) {
+        client.get(Constants.url, addPageCountToRequest(this.currentRequestNoPage, page), handler);
+
+    }
+
+    public RequestParams addPageCountToRequest(RequestParams param, int pageCount) {
+        param.put("page", pageCount);
+        return param;
+    }
+
+
 
 
 
