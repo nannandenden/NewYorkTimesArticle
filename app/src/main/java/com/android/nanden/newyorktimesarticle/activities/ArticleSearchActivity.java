@@ -1,24 +1,22 @@
 package com.android.nanden.newyorktimesarticle.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.android.nanden.newyorktimesarticle.Constants;
 import com.android.nanden.newyorktimesarticle.R;
 import com.android.nanden.newyorktimesarticle.Utils;
-import com.android.nanden.newyorktimesarticle.adapter.ArticleArrayAdapter;
+import com.android.nanden.newyorktimesarticle.adapter.ArticleAdapter;
 import com.android.nanden.newyorktimesarticle.client.ArticleClient;
 import com.android.nanden.newyorktimesarticle.fragments.FilterDialogFragment;
 import com.android.nanden.newyorktimesarticle.model.Article;
@@ -42,13 +40,13 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         .FilterDialogListener {
 
     private static final String LOG_TAG = ArticleSearchActivity.class.getSimpleName();
-    @BindView(R.id.gvArticle)
-    GridView gvArticle;
+    @BindView(R.id.rvArticle)
+    RecyclerView rvArticle;
     @BindView(R.id.toolbar) Toolbar toolbar;
 
     private ArticleClient client = new ArticleClient();
     private List<Article> articles;
-    private ArticleArrayAdapter adapter;
+    private ArticleAdapter articleAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,45 +55,46 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         ButterKnife.bind(this);
 
         setViews();
-        defineViewEventsFunction();
+//        defineViewEventsFunction();
     }
 
     private void setViews() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("New York Times Articles");
         articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        gvArticle.setAdapter(adapter);
+        articleAdapter = new ArticleAdapter(this, articles);
+        rvArticle.setAdapter(articleAdapter);
+        rvArticle.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
     }
 
-    private void defineViewEventsFunction() {
-        // for opening the clicked article in new webview
-        gvArticle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(ArticleSearchActivity.this, ArticleDetailActivity.class);
-                Article article = articles.get(i);
-                intent.putExtra("article", article);
-                startActivity(intent);
-            }
-        });
-        // for filling the items automatically (infinite scrolling)
-        // onLoadMore method wil be triggered when use exceed the set visibleThreshHold limit
-        gvArticle.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                // triggered only when new data needs to be appended to the gridview list
-                // add code for append new item to adapter view
-                // page: next page to load
-                Log.d(LOG_TAG, "onLoadMore:totalItemsCount: " + totalItemsCount);
-                Log.d(LOG_TAG, "onLoadMore:page: " + page);
-                loadNextDataFromApi(page);
-                // return true only if there is a new item to load
-                return true;
-            }
-        });
-
-    }
+//    private void defineViewEventsFunction() {
+//        // for opening the clicked article in new webview
+//        gvArticle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Intent intent = new Intent(ArticleSearchActivity.this, ArticleDetailActivity.class);
+//                Article article = articles.get(i);
+//                intent.putExtra("article", article);
+//                startActivity(intent);
+//            }
+//        });
+//        // for filling the items automatically (infinite scrolling)
+//        // onLoadMore method wil be triggered when use exceed the set visibleThreshHold limit
+//        gvArticle.setOnScrollListener(new EndlessScrollListener() {
+//            @Override
+//            public boolean onLoadMore(int page, int totalItemsCount) {
+//                // triggered only when new data needs to be appended to the gridview list
+//                // add code for append new item to adapter view
+//                // page: next page to load
+//                Log.d(LOG_TAG, "onLoadMore:totalItemsCount: " + totalItemsCount);
+//                Log.d(LOG_TAG, "onLoadMore:page: " + page);
+//                loadNextDataFromApi(page);
+//                // return true only if there is a new item to load
+//                return true;
+//            }
+//        });
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,7 +119,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                                 articles.clear();
                             }
                             articles.addAll(Article.fromJsonArray(articleJsonResults));
-                            adapter.notifyDataSetChanged();
+                            articleAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             Log.d(LOG_TAG, "error: " + e.getMessage());
                         }
@@ -191,7 +190,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                     }
                     filterResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(filterResults));
-                    adapter.notifyDataSetChanged();
+                    articleAdapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.d(LOG_TAG, "error: " + e.getMessage());
                 }
@@ -222,7 +221,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                 try {
                     nextRequestResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(nextRequestResults));
-                    adapter.notifyDataSetChanged();
+                    articleAdapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.d(LOG_TAG, "error: " + e.getMessage());
                 }
