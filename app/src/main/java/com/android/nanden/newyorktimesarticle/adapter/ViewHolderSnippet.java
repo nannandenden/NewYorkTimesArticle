@@ -21,9 +21,20 @@ public class ViewHolderSnippet extends RecyclerView.ViewHolder {
 
     @Nullable
     @BindView(R.id.tvSnippet) TextView tvSnippet;
-    public ViewHolderSnippet(View itemView) {
+    public ViewHolderSnippet(final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ArticleAdapter.getOnItemClickListener() != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        ArticleAdapter.getOnItemClickListener().onItemClick(itemView, position);
+                    }
+                }
+            }
+        });
     }
 
     public TextView getHeadline() {

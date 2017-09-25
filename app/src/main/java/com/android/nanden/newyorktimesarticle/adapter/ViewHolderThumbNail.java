@@ -24,9 +24,20 @@ public class ViewHolderThumbNail extends RecyclerView.ViewHolder {
     @BindView(R.id.tvHeadline)
     TextView tvHeadline;
 
-    public ViewHolderThumbNail(View itemView) {
+    public ViewHolderThumbNail(final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ArticleAdapter.getOnItemClickListener() != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        ArticleAdapter.getOnItemClickListener().onItemClick(itemView, position);
+                    }
+                }
+            }
+        });
     }
 
     public ImageView getThumbNail() {

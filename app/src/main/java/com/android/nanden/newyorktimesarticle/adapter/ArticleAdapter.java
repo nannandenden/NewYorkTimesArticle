@@ -20,12 +20,16 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<Article> articles;
     // attaching click handler using listeners
     // defining the interface
-    private OnItemClickListener listener;
+    private static OnItemClickListener listener;
     public interface OnItemClickListener {
         void onItemClick(View viewItem, int position);
     }
     public void setOnItemClickListener(OnItemClickListener listener) {
+        // link the listener from activity to here
         this.listener = listener;
+    }
+    public static OnItemClickListener getOnItemClickListener() {
+        return listener;
     }
     public ArticleAdapter(Context context, List<Article> articles) {
         this.context = context;
@@ -86,28 +90,4 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         return -1;
     }
-
-//    public class ViewHolder extends RecyclerView.ViewHolder {
-//        @BindView(R.id.ivThumbnail)
-//        ImageView ivThumbnail;
-//        @BindView(R.id.tvHeadline)
-//        TextView tvHeadline;
-//
-//        public ViewHolder(final View itemView) {
-//            super(itemView);
-//            ButterKnife.bind(this, itemView);
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    // triggers click upwards to the adapter on click
-//                    if (listener != null) {
-//                        int position = getAdapterPosition();
-//                        if (position != RecyclerView.NO_POSITION) {
-//                            listener.onItemClick(itemView, position);
-//                        }
-//                    }
-//                }
-//            });
-//        }
-//    }
 }
