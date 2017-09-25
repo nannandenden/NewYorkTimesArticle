@@ -32,6 +32,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_article_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Article Detail");
 
         article = (Article) getIntent().getSerializableExtra("article");
         webView.getSettings().setJavaScriptEnabled(true);

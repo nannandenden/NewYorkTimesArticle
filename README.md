@@ -2,7 +2,7 @@
 
 **Name of your app** is an android app that allows a user to search for articles on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **X** hours spent in total
+Time spent: 11 hours spent in total
 
 ## User Stories
 
@@ -46,13 +46,14 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://i.imgur.com/jPjFo5E.gif' title='Video Walkthrough' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+* Infinite scrolling sometimes works and sometimes does not work. However, it is difficult to debug since the network call is in the background thread.
+* Using Toolbar could be little tricky since it's simply using the view to define the action bar, it is flexible yet more to manage. Such as location and relationship with other views.
 
 ## Open-source libraries used
 
