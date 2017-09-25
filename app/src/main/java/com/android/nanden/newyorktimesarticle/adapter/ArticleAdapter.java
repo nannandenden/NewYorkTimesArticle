@@ -18,10 +18,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by nanden on 9/24/17.
- */
-
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
     private Context context;
     private List<Article> articles;
@@ -33,7 +29,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        LayoutInflater inflater = LayoutInflater.from(this.context);
         View articleView = inflater.inflate(R.layout.item_article_result, parent, false);
         return new ViewHolder(articleView);
     }
@@ -41,13 +37,15 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Article article = articles.get(position);
+
         ImageView ivThumbNail = holder.ivThumbnail;
-        TextView tvHeadline = holder.tvHeadline;
         String thumbnail = article.getThumbNail();
         if (!TextUtils.isEmpty(thumbnail)) {
             System.out.println("thumbnail: " + thumbnail);
             Picasso.with(context).load(thumbnail).fit().into(ivThumbNail);
         }
+
+        TextView tvHeadline = holder.tvHeadline;
         tvHeadline.setText(article.getHeadline());
 
     }
@@ -57,7 +55,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         return this.articles.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivThumbnail)
         ImageView ivThumbnail;
         @BindView(R.id.tvHeadline)

@@ -47,6 +47,8 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
     private ArticleClient client = new ArticleClient();
     private List<Article> articles;
     private ArticleAdapter articleAdapter;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         ButterKnife.bind(this);
 
         setViews();
-//        defineViewEventsFunction();
+        defineViewEventsFunction();
     }
 
     private void setViews() {
@@ -64,10 +66,12 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         articles = new ArrayList<>();
         articleAdapter = new ArticleAdapter(this, articles);
         rvArticle.setAdapter(articleAdapter);
-        rvArticle.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        this.staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,
+                StaggeredGridLayoutManager.VERTICAL);
+        rvArticle.setLayoutManager(staggeredGridLayoutManager);
     }
 
-//    private void defineViewEventsFunction() {
+    private void defineViewEventsFunction() {
 //        // for opening the clicked article in new webview
 //        gvArticle.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -78,23 +82,15 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
 //                startActivity(intent);
 //            }
 //        });
-//        // for filling the items automatically (infinite scrolling)
-//        // onLoadMore method wil be triggered when use exceed the set visibleThreshHold limit
-//        gvArticle.setOnScrollListener(new EndlessScrollListener() {
-//            @Override
-//            public boolean onLoadMore(int page, int totalItemsCount) {
-//                // triggered only when new data needs to be appended to the gridview list
-//                // add code for append new item to adapter view
-//                // page: next page to load
-//                Log.d(LOG_TAG, "onLoadMore:totalItemsCount: " + totalItemsCount);
-//                Log.d(LOG_TAG, "onLoadMore:page: " + page);
-//                loadNextDataFromApi(page);
-//                // return true only if there is a new item to load
-//                return true;
-//            }
-//        });
-//
-//    }
+        scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+            @Override
+            protected void onLoadMore(int page, int totalItemCount, RecyclerView recyclerView) {
+                Log.d(LOG_TAG, "onLoadMore: " + page + "totalItemCount: " + totalItemCount);
+                loadNextDataFromApi(page);
+            }
+        };
+        rvArticle.addOnScrollListener(scrollListener);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,6 +113,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                             if (!articles.isEmpty()) {
                                 // clear the previous search result
                                 articles.clear();
+                                scrollListener.resetState();
                             }
                             articles.addAll(Article.fromJsonArray(articleJsonResults));
                             articleAdapter.notifyDataSetChanged();
@@ -187,6 +184,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                     if (!articles.isEmpty()) {
                         // clear the previous search result
                         articles.clear();
+                        scrollListener.resetState();
                     }
                     filterResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(filterResults));
@@ -221,7 +219,8 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                 try {
                     nextRequestResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(nextRequestResults));
-                    articleAdapter.notifyDataSetChanged();
+                    int currentSize = articleAdapter.getItemCount();
+                    articleAdapter.notifyItemRangeInserted(currentSize, articles.size()-1);
                 } catch (JSONException e) {
                     Log.d(LOG_TAG, "error: " + e.getMessage());
                 }
