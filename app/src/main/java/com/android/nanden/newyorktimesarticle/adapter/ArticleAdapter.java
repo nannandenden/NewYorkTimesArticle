@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.android.nanden.newyorktimesarticle.R;
 import com.android.nanden.newyorktimesarticle.model.Article;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -67,7 +67,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void bindThumbnail(ViewHolderThumbNail holder, int position) {
         Article article = articles.get(position);
         holder.getHeadline().setText(article.getHeadline());
-        Picasso.with(this.context).load(article.getThumbNail()).fit().into(holder.getThumbNail());
+        Glide.with(this.context).load(article.getThumbNail()).into(holder.getThumbNail());
     }
 
     private void bindSnippet(ViewHolderSnippet holder, int position) {
