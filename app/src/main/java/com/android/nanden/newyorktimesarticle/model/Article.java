@@ -16,10 +16,10 @@ import java.util.List;
 @Parcel
 public class Article {
 
-    private String webUrl;
-    private String headline;
-    private String thumbNail;
-    private String snippet;
+    String webUrl;
+    String headline;
+    String thumbNail;
+    String snippet;
 
     public Article() {
     }

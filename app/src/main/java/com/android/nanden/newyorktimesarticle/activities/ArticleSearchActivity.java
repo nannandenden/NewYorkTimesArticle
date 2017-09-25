@@ -75,7 +75,7 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
     }
 
     private void defineViewEventsFunction() {
-        articleAdapter.setOnItemClickListener(this);
+        articleAdapter.setOnItemClickListener(this::onItemClick);
         scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             protected void onLoadMore(int page, int totalItemCount, RecyclerView recyclerView) {
