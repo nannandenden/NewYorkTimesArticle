@@ -3,14 +3,15 @@ package com.android.nanden.newyorktimesarticle.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -33,7 +34,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
 
 import static com.android.nanden.newyorktimesarticle.R.id.miActionFilter;
@@ -42,8 +42,6 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
         .FilterDialogListener {
 
     private static final String LOG_TAG = ArticleSearchActivity.class.getSimpleName();
-    @BindView(R.id.etSearchItem)
-    EditText etSearchItem;
     @BindView(R.id.gvArticle)
     GridView gvArticle;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -103,6 +101,46 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_article_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(LOG_TAG, "onQueryTextSubmit clicked. query: " + query);
+                JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        Log.d(LOG_TAG, "response: " + response.toString());
+                        JSONArray articleJsonResults = null;
+
+                        try {
+                            articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                            if (!articles.isEmpty()) {
+                                // clear the previous search result
+                                articles.clear();
+                            }
+                            articles.addAll(Article.fromJsonArray(articleJsonResults));
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            Log.d(LOG_TAG, "error: " + e.getMessage());
+                        }
+                    }
+                };
+                if (Utils.isNetworkAvailable(getApplicationContext())) {
+                    client.getSearchResult(query, handler, 0);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_LONG).show();
+                }
+                // remove keyboard focus
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return true;
     }
 
@@ -120,33 +158,6 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
 
     }
 
-    @OnClick(R.id.btnSearch)
-    public void onArticleSearch(View view) {
-        // new search notify. clear the view
-        articles.clear();
-        adapter.notifyDataSetChanged();
-        String query = etSearchItem.getText().toString();
-        JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d(LOG_TAG, "response: " + response.toString());
-                JSONArray articleJsonResults = null;
-
-                try {
-                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    articles.addAll(Article.fromJsonArray(articleJsonResults));
-                    adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    Log.d(LOG_TAG, "error: " + e.getMessage());
-                }
-            }
-        };
-        if (Utils.isNetworkAvailable(this)) {
-            client.getSearchResult(query, handler, 0);
-        } else {
-            Toast.makeText(this, "No internet connection", Toast.LENGTH_LONG).show();
-        }
-    }
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
         FilterDialogFragment filterDialogFragment = FilterDialogFragment.newInstance("Filter");
@@ -155,9 +166,6 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
 
     @Override
     public void onFilterDialog(Map<String, String> filterValue) {
-        // new search notify. clear the view
-        articles.clear();
-        adapter.notifyDataSetChanged();
         Log.d(LOG_TAG, "onFilterDialog called");
         String newsDesk = filterValue.containsKey(Constants.NEWS_DESK) ? filterValue.get
                 (Constants.NEWS_DESK) : null;
@@ -177,6 +185,10 @@ public class ArticleSearchActivity extends AppCompatActivity implements FilterDi
                 Log.d(LOG_TAG, "response: " + response.toString());
                 JSONArray filterResults;
                 try {
+                    if (!articles.isEmpty()) {
+                        // clear the previous search result
+                        articles.clear();
+                    }
                     filterResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(filterResults));
                     adapter.notifyDataSetChanged();
